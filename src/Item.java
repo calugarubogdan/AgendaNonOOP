@@ -6,7 +6,16 @@ import java.io.Serializable;
  */
 class Item implements Serializable{
     private String name;
+    private String prenume;
     private String phoneNumber;
+
+    public String getPrenume() {
+        return prenume;
+    }
+
+    public void setPrenume(String prenume) {
+        this.prenume = prenume;
+    }
 
     public String getPhoneNumber() {
         return phoneNumber;

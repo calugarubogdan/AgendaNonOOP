@@ -21,6 +21,8 @@ public class AgendaAsCollection {
     public static void main(String[] args) {
         System.out.println("AgendaTa versiunea 2.0");
         AgendaAsCollection m = new AgendaAsCollection();
+        m.readFromFile();
+
 
         do {
             m.printMenu();
@@ -41,12 +43,12 @@ public class AgendaAsCollection {
                 case 5:
                     m.deleteItem();
                     break;
-                case 6:
-                    m.readFromFile();
-                    break;
-                case 7:
-                    m.writeToFile();
-                    break;
+               // case 6:
+                   // m.readFromFile();
+                   // break;
+               // case 7:
+                    //m.writeToFile();
+                    //break;
                 case 9:
                     m.exitOption();
                     break;
@@ -61,15 +63,30 @@ public class AgendaAsCollection {
     private void createItem() {
         HandleKeyboard handleKeyboard = new HandleKeyboard().invokeItem();
         String name = handleKeyboard.getName();
+        String prenume = handleKeyboard.getPrenume();
         String phone = handleKeyboard.getPhone();
 
         Item item = new Item();
         item.setName(name);
+        item.setPrenume(prenume);
         item.setPhoneNumber(phone);
 
         agenda.add(item);
         System.out.println("Added.");
+        FileOutputStream fwr = null;
+        try {
+            byte[] data = SerializationUtils.serialize((ArrayList) agenda);
+            File f = new File("agendalist.txt");
+            fwr = new FileOutputStream(f);
+            fwr.write(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(fwr);
+        }
+        System.out.println("Write to file done!");
     }
+
 
 
     private void updateItem() {
@@ -78,10 +95,12 @@ public class AgendaAsCollection {
         if (indexItem != -1) { //found
             HandleKeyboard handleKeyboard = new HandleKeyboard().invokeItem();
             String name = handleKeyboard.getName(); // so we can change the name as well
+            String prenume = handleKeyboard.getPrenume();//so we can update the prenume as well
             String phone = handleKeyboard.getPhone();
 
             Item item = new Item();
             item.setName(name);
+            item.setPrenume(prenume);
             item.setPhoneNumber(phone);
             agenda.remove(indexItem);
             agenda.add(item);
@@ -129,16 +148,21 @@ public class AgendaAsCollection {
     /* returns the index where the name was found or -1 if the name is not in the agenda */
     private void searchAgendaAndDisplay() {
         int index = searchAgenda();
-        if (index != -1) { //found
-            Item item = agenda.get(index);
-            String name = item.getName();
-            String phoneNumber = item.getPhoneNumber();
-            System.out.println("Name:" + name);
+        Item item = agenda.get(index);
+        String name = item.getName();
+
+       if (index != -1) { //found
+
+            String prenume =item.getPrenume();
+             String phoneNumber = item.getPhoneNumber();
+             System.out.println("Name:" + name);
+             System.out.println("Prenume:" + prenume);
             System.out.println("Phone Number:" + phoneNumber);
+
         } else {
-            System.out.println("This name does not exists in agenda!");
-        }
+        System.out.println("This name does not exists in agenda!");
     }
+}
 
 
     private void listAgenda() {
@@ -146,8 +170,9 @@ public class AgendaAsCollection {
         System.out.println("Your Agenda:");
         for (Item anAgenda : agenda) {
             String name = anAgenda.getName();
+            String prenume = anAgenda.getPrenume();
             String telephone = anAgenda.getPhoneNumber();
-            System.out.println("Name: " + name + " ;Phone: " + telephone);
+            System.out.println("Name: " + name + " ;Prenume: "+ prenume +" ;Phone: " + telephone);
         }
         // System.out.println("empty spaces:" + emptySpaces);
         System.out.println("---------------");
@@ -229,6 +254,7 @@ public class AgendaAsCollection {
 
     private class HandleKeyboard {
         private String name;
+        private String prenume;
         private String phone;
 
         private int option;
@@ -239,6 +265,8 @@ public class AgendaAsCollection {
         public String getName() {
             return name;
         }
+
+        public String getPrenume(){return prenume;}
 
         public String getPhone() {
             return phone;
@@ -256,6 +284,8 @@ public class AgendaAsCollection {
             Scanner s = new Scanner(System.in);
             System.out.print("Name: ");
             name = s.nextLine();
+            System.out.print("Prenume: ");
+            prenume = s.nextLine();
             System.out.print("Phone Number: ");
             phone = s.nextLine();
             return this;
