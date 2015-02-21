@@ -43,10 +43,10 @@ public class AgendaAsCollection {
                 case 5:
                     m.deleteItem();
                     break;
-               // case 6:
-                   // m.readFromFile();
+                case 6:
+                    m.readFromFile();
                    // break;
-               // case 7:
+                case 7:
                     //m.writeToFile();
                     //break;
                 case 9:
